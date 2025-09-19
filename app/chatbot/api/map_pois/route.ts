@@ -23,6 +23,21 @@ export async function POST(request: Request) {
 
   const q = buildOverpassQuery(kind, lat, lon, radius);
   try {
+    // Prefer local Flask endpoint which may provide caching / custom logic
+    try {
+      const flaskRes = await fetch('http://127.0.0.1:5000/map_pois', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat, lon, radius_m: radius, kind, limit })
+      });
+      if (flaskRes.ok) {
+        const d = await flaskRes.json();
+        return NextResponse.json(d);
+      }
+    } catch (err) {
+      // fall back to direct Overpass call below
+    }
+
     const res = await fetch('http://overpass-api.de/api/interpreter', {
       method: 'POST',
       body: new URLSearchParams({ data: q }),

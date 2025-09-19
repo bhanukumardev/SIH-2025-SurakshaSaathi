@@ -1,5 +1,18 @@
 import { NextResponse } from 'next/server';
 
+// Simple in-memory TTL cache for this server process. For production use a
+// shared cache like Redis (see README or comments).
+const _CACHE: Map<string, { expires: number; value: any }> = new Map();
+function cacheGet(key: string) {
+  const rec = _CACHE.get(key);
+  if (!rec) return null;
+  if (rec.expires < Date.now()) { _CACHE.delete(key); return null; }
+  return rec.value;
+}
+function cacheSet(key: string, value: any, ttlMs = 5 * 60 * 1000) {
+  _CACHE.set(key, { expires: Date.now() + ttlMs, value });
+}
+
 async function queryUSGSEarthquakes(lat: number, lon: number, maxradiuskm = 200, days = 180, limit = 10) {
   const start = new Date(Date.now() - days * 24 * 3600 * 1000).toISOString().slice(0, 10);
   const url = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=${lat}&longitude=${lon}&maxradiuskm=${maxradiuskm}&starttime=${start}&limit=${limit}`;
@@ -59,10 +72,31 @@ export async function POST(request: Request) {
   const lon = parseFloat(body.lon);
   const radius = parseFloat(body.radius_km || body.radius || 20);
   const days = parseInt(body.days || '180', 10) || 180;
-  const country = body.country || null;
+  const country = body.country || 'India';
 
   if (Number.isNaN(lat) || Number.isNaN(lon)) {
     return NextResponse.json({ error: 'lat and lon required' }, { status: 400 });
+  }
+
+  // Cache key: lat/lon + radius + days + country
+  const cacheKey = `nearby:${lat}:${lon}:${radius}:${days}:${country}`;
+  const cached = cacheGet(cacheKey);
+  if (cached) return NextResponse.json({ disasters: cached });
+
+  // First try proxying to a local Flask server if available (so Python logic in disasters.py runs)
+  try {
+    const flaskRes = await fetch('http://127.0.0.1:5000/nearby_disasters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lat, lon, radius_km: radius, days, country })
+    });
+    if (flaskRes.ok) {
+      const d = await flaskRes.json();
+      try { cacheSet(cacheKey, d.disasters || d, 5 * 60 * 1000); } catch (e) {}
+      return NextResponse.json(d);
+    }
+  } catch (e) {
+    // no local Flask available — fall back to JS implementation below
   }
 
   const eqs = await queryUSGSEarthquakes(lat, lon, radius, days, 50);
@@ -86,5 +120,6 @@ export async function POST(request: Request) {
     return tb - ta;
   });
 
+  try { cacheSet(cacheKey, normalized, 5 * 60 * 1000); } catch (e) {}
   return NextResponse.json({ disasters: normalized });
 }
