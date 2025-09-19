@@ -189,35 +189,35 @@ Suraksha Sathi aims to significantly enhance disaster preparedness awareness amo
 
 ## 👥 Contributors
 
-- **Bhanu Kumar Dev** (Team Leader)  
-  - Led project management, system architecture, GitHub repo setup, and deployment.  
-  - Coordinated feature roadmap and integration of Next.js, TypeScript, and Vercel deployment.  
-  - Hands-on with core dashboard, routing, and overall system QA.  
+- **Bhanu Kumar Dev** (Team Leader & Backend APIs)
+  - Led project management, system architecture, GitHub repo setup, and deployment.
+  - Coordinated feature roadmap and integration of Next.js, TypeScript, and Vercel deployment.
+  - Hands-on with core dashboard, routing, and overall system QA.
 
-- **Aman Sinha** (Login/Register Developer)  
-  - Developed authentication, user session, and login/register flows.  
-  - Implemented Next.js API routes, protected pages, and role-based access logic.  
-  - Contributed on Tailwind CSS utility classes for the auth UI.  
+- **Aman Sinha** (Login/Register Developer & Frontend UI/UX)
+  - Developed authentication, user session, and login/register flows.
+  - Implemented Next.js API routes, protected pages, and role-based access logic.
+  - Contributed on Tailwind CSS utility classes for the auth UI.
 
-- **Kanishka** (Chatbot Integration)  
-  - Designed and coded in-app AI disaster chatbot using LLM/AI API.  
-  - Maintained chatbot state using React context/hooks.  
-  - Custom styled bot with Shadcn UI and handled accessibility.  
+- **Kanishka** (Chatbot Integration , Gamification & Leaderboard)
+  - Designed and coded in-app AI disaster chatbot using LLM/AI API.
+  - Maintained chatbot state using React context/hooks.
+  - Custom styled bot with Shadcn UI and handled accessibility.
 
-- **Kumar Gaurav** (Video Editing & Content Explanation)  
-  - Produced and integrated learning videos.  
-  - Added multimedia support in Next.js, tested `<video>`/media components.  
-  - Helped with UI/UX review for simulation and drill modules.  
+- **Kumar Gaurav** (Video Editing, Content Explanation, Educational Content & Drills)
+  - Produced and integrated learning videos.
+  - Added multimedia support in Next.js, tested `<video>`/media components.
+  - Helped with UI/UX review for simulation and drill modules.
 
-- **Gaurav** (Documentation & PPT)  
-  - Drafted project documentation, README, and developer guides using MkDocs.  
-  - Created functional flowcharts and technical diagrams.  
-  - Maintained project slides, summarized API configurations, and usage docs.  
+- **Gaurav** (Documentation, PPT & Real-time Systems)
+  - Drafted project documentation, README, and developer guides using MkDocs.
+  - Created functional flowcharts and technical diagrams.
+  - Maintained project slides, summarized API configurations, and usage docs.
 
-- **Yuvakshi** (Presentation & Communication)  
-  - Led team presentations and demo delivery.  
-  - Managed user feedback/testing sessions, coordinated Slack/Discord.  
-  - Validated region/language configurations and accessibility.  
+- **Yuvakshi** (Presentation, Communication & Testing & DevOps)
+  - Led team presentations and demo delivery.
+  - Managed user feedback/testing sessions, coordinated Slack/Discord.
+  - Validated region/language configurations and accessibility.
 
 ---
 
