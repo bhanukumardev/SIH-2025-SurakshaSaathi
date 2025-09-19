@@ -199,7 +199,7 @@ Suraksha Sathi aims to significantly enhance disaster preparedness awareness amo
   - Implemented Next.js API routes, protected pages, and role-based access logic.
   - Contributed on Tailwind CSS utility classes for the auth UI.
 
-- **Kanishka** (Chatbot Integration & Gamification & Leaderboard)
+- **Kanishka** (Chatbot Integration , Gamification & Leaderboard)
   - Designed and coded in-app AI disaster chatbot using LLM/AI API.
   - Maintained chatbot state using React context/hooks.
   - Custom styled bot with Shadcn UI and handled accessibility.
