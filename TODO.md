@@ -1,18 +1,17 @@
-# Backend Setup for Local Development
+# Fix Dropdown Menus
 
-## SQLite Setup
-- [x] Check .env for DATABASE_URL="sqlite:./dev.db" and set if missing
-- [x] Ensure folder for database file exists (e.g., ./server if needed)
-- [x] Modify server/db.js to parse DATABASE_URL correctly (strip 'sqlite:' prefix)
-- [x] Ensure database auto-creates if missing
-- [x] Verify session store in server/index.js uses consistent path
+## Tasks
+- [x] Investigate ProfileDropdown.tsx component for visibility issues
+- [x] Investigate UserMenu.tsx component for visibility issues
+- [x] Check CSS and positioning in dashboard and modules pages
+- [x] Refactor ProfileDropdown.tsx to use shadcn/ui DropdownMenu for better reliability
+- [ ] Verify LanguageSelector.tsx dropdown functionality
+- [ ] Verify UserMenu.tsx dropdown functionality
+- [ ] Test all dropdown menus for proper open/close behavior, alignment, and z-index
 
-## Nodemailer Setup
-- [x] Fix server/email.js to use nodemailer.createTransport instead of createTransporter
-- [x] Update transporter config to secure: true as per task
-- [x] Confirm environment variables are used correctly
-
-## Testing
-- [x] Start backend with node server/index.js
-- [x] Confirm no SQLite or nodemailer errors
-- [x] Output "Setup complete" if successful, else provide manual instructions
+## Current Status
+- Identified that ProfileDropdown.tsx uses custom dropdown implementation that may have positioning issues
+- UserMenu.tsx uses shadcn/ui DropdownMenu components which should be more reliable
+- LanguageSelector.tsx uses shadcn/ui DropdownMenu components
+- ProfileDropdown dropdown uses absolute positioning with z-100, but may be positioned incorrectly
+- Need to refactor ProfileDropdown to use shadcn/ui DropdownMenu for consistency and reliability
