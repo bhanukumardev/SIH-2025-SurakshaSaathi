@@ -42,19 +42,25 @@ export async function POST(request: Request) {
   }
 
   // First: try proxying to a running Python Flask server (app.py) if available.
+  // Try proxying to a running Python Flask server (app.py) if available.
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
     const flaskRes = await fetch('http://127.0.0.1:5000/handle_message', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
-    });
-    if (flaskRes.ok) {
-      const d = await flaskRes.json();
-      if (d && d.response) return NextResponse.json({ response: d.response });
+      body: JSON.stringify({ message }),
+      signal: controller.signal
+    }).finally(() => clearTimeout(timeout));
+    // Parse JSON body even if Flask returned a non-2xx status.
+    const d = await flaskRes.json().catch(() => null);
+    if (d && d.response) {
+      // Return the Flask-provided response and preserve Flask status code where appropriate.
+      return NextResponse.json({ response: d.response }, { status: flaskRes.status || 200 });
     }
-    // If flask returns non-ok, we fall through to local fallback
+    // If Flask returned no useful body, fall through to local fallback
   } catch (e) {
-    // connection failed — no Flask server running locally; continue to fallback
+    // connection failed or timed out — continue to fallback
   }
 
   // Attempt a simple keyword fallback using intents.json
@@ -74,6 +80,19 @@ export async function POST(request: Request) {
 
   // No keyword match — return general updates as a helpful fallback
   const tips = await fetchLatestDisasterUpdates('general');
-  const fallText = "I couldn't access the ML model right now, but here are some important tips and latest updates:\n\n" + tips.map((t, i) => `${i + 1}. ${t}`).join('\n');
-  return NextResponse.json({ response: fallText }, { status: 503 });
+  const defaultTips = [
+    'Stay tuned to local news and official alerts for your area.',
+    'Prepare an emergency kit with water, food, and essential medicines.',
+    'Identify safe locations and have an evacuation plan ready.'
+  ];
+  const chosen = (tips && tips.length) ? tips.slice(0, 3) : defaultTips;
+  const fallText = [
+    "I couldn't reach the ML model right now.",
+    "I can still help — here are a few useful options:",
+    `1) Preparedness tips and recent updates:\n${chosen.map((t, i) => `${i + 1}. ${t}`).join('\n')}`,
+    '2) Try re-sending your question in a moment, or ask a specific topic (for example: "earthquake preparedness").',
+    '3) Share your location so I can look up nearby resources (hospitals, shelters, schools).'
+  ].join('\n\n');
+
+  return NextResponse.json({ response: fallText }, { status: 200 });
 }

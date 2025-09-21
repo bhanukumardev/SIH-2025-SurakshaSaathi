@@ -85,18 +85,21 @@ export async function POST(request: Request) {
 
   // First try proxying to a local Flask server if available (so Python logic in disasters.py runs)
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
     const flaskRes = await fetch('http://127.0.0.1:5000/nearby_disasters', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lat, lon, radius_km: radius, days, country })
-    });
-    if (flaskRes.ok) {
-      const d = await flaskRes.json();
+      body: JSON.stringify({ lat, lon, radius_km: radius, days, country }),
+      signal: controller.signal
+    }).finally(() => clearTimeout(timeout));
+    const d = await flaskRes.json().catch(() => null);
+    if (d) {
       try { cacheSet(cacheKey, d.disasters || d, 5 * 60 * 1000); } catch (e) {}
-      return NextResponse.json(d);
+      return NextResponse.json(d, { status: flaskRes.status || 200 });
     }
   } catch (e) {
-    // no local Flask available — fall back to JS implementation below
+    // no local Flask available or timed out — fall back to JS implementation below
   }
 
   const eqs = await queryUSGSEarthquakes(lat, lon, radius, days, 50);

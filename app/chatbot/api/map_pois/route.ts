@@ -22,29 +22,46 @@ export async function POST(request: Request) {
   }
 
   const q = buildOverpassQuery(kind, lat, lon, radius);
-  try {
-    // Prefer local Flask endpoint which may provide caching / custom logic
     try {
-      const flaskRes = await fetch('http://127.0.0.1:5000/map_pois', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lat, lon, radius_m: radius, kind, limit })
-      });
-      if (flaskRes.ok) {
-        const d = await flaskRes.json();
-        return NextResponse.json(d);
-      }
-    } catch (err) {
-      // fall back to direct Overpass call below
-    }
+        // Prefer local Flask endpoint which may provide caching / custom logic
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 5000);
+          const flaskRes = await fetch('http://127.0.0.1:5000/map_pois', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lat, lon, radius_m: radius, kind, limit }),
+            signal: controller.signal
+          }).finally(() => clearTimeout(timeout));
+          // Parse Flask JSON even when status is non-2xx; Flask may return a useful JSON error or pois list.
+          const d = await flaskRes.json().catch(() => null);
+          if (d) {
+            return NextResponse.json(d, { status: flaskRes.status || 200 });
+          }
+        } catch (err) {
+          // fall back to direct Overpass call below (Flask unreachable or timed out)
+        }
 
-    const res = await fetch('http://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      body: new URLSearchParams({ data: q }),
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
-    if (!res.ok) return NextResponse.json({ error: 'Could not fetch POIs' }, { status: 500 });
-    const data = await res.json();
+        // Try Overpass public API
+        const res = await fetch('http://overpass-api.de/api/interpreter', {
+          method: 'POST',
+          body: new URLSearchParams({ data: q }),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        if (!res.ok) {
+          // As a last-ditch fallback, return any cached POIs served by our own /chatbot/api/pois route
+          try {
+            const cached = await fetch('/chatbot/api/pois');
+            if (cached.ok) {
+              const cd = await cached.json();
+              return NextResponse.json({ pois: (cd.pois || {}) });
+            }
+          } catch (e) {
+            // ignore
+          }
+          return NextResponse.json({ error: 'Could not fetch POIs from Overpass and Flask.' }, { status: 502 });
+        }
+      const data = await res.json();
     const elements = Array.isArray(data.elements) ? data.elements : [];
     const pois: any[] = [];
     for (const el of elements) {
@@ -58,7 +75,7 @@ export async function POST(request: Request) {
       if (pois.length >= limit) break;
     }
     return NextResponse.json({ pois });
-  } catch (e) {
-    return NextResponse.json({ error: 'Could not fetch POIs', details: String(e) }, { status: 500 });
+    } catch (e) {
+      return NextResponse.json({ error: 'Could not fetch POIs', details: String(e) }, { status: 500 });
   }
 }

@@ -69,10 +69,11 @@ function ChatbotPanel({ onClose }: { onClose: () => void }) {
     setLoading(true);
     try {
       const res = await fetch('/chatbot/api/latest_updates', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tag }) });
-      const d = await res.json();
-      const updates = d?.updates || [];
-      const text = updates.length ? `LATEST UPDATES:\n${updates.map((u: string, i: number) => `${i+1}. ${u}`).join('\n')}` : 'No updates found.';
-      setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text }]);
+  const d = await res.json();
+  const updates = d?.updates || [];
+  const metaNote = d?.meta?.note ? `\n\n(Note: ${d.meta.note})` : '';
+  const text = updates.length ? `LATEST UPDATES:\n${updates.map((u: string, i: number) => `${i+1}. ${u}`).join('\n')}${metaNote}` : `No updates found.${metaNote}`;
+  setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text }]);
     } catch (e) {
       setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text: "Could not fetch latest updates." }]);
     } finally {
@@ -241,6 +242,41 @@ function ChatbotPanel({ onClose }: { onClose: () => void }) {
         <div className="font-semibold">Safety Assistant</div>
         <div className="flex items-center gap-2">
           <button onClick={() => getLatestUpdates('general')} className="text-white text-sm mr-2">Get Latest Updates</button>
+          <button onClick={async () => {
+            // Fetch pre-fetched POIs (public/pois.json) if available
+            try {
+              const res = await fetch('/chatbot/api/pois');
+              const d = await res.json();
+              const payload = d.pois || d;
+              const metaNote = d?.meta?.note ? `\n\n(Note: ${d.meta.note})` : '';
+              const text = payload && Object.keys(payload).length ? Object.entries(payload).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.length : JSON.stringify(v)}`).join('\n') : 'No pre-fetched POIs found.';
+              setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text: `POIs:\n${text}${metaNote}` }]);
+            } catch (e) {
+              setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text: 'Could not fetch pre-fetched POIs.' }]);
+            }
+          }} className="text-white text-sm mr-2">Search POIs</button>
+          <button onClick={async () => {
+            // Trigger nearby disasters search using detect_location or prompt for location
+            setLoading(true);
+            try {
+              const locRes = await fetch('/chatbot/api/detect_location');
+              if (!locRes.ok) throw new Error('loc failed');
+              const ld = await locRes.json();
+              const loc = ld.location;
+              if (!loc) throw new Error('no loc');
+              const nearRes = await fetch('/chatbot/api/nearby_disasters', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lat: loc.lat, lon: loc.lon, radius_km: radiusKm, days, country }) });
+              const nearJson = await nearRes.json();
+              const list = nearJson.disasters || [];
+              if (!list.length) setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text: 'No nearby incidents found.' }]);
+              else {
+                const text = list.slice(0, 5).map((d: any, i: number) => `${i+1}. ${d.title || d.type}`).join('\n');
+                setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text: `Nearby incidents:\n${text}` }]);
+              }
+            } catch (e: any) {
+              const note = e?.message ? `\n\n(${e.message})` : '';
+              setMessages((m) => [...m, { id: Date.now().toString(), sender: 'bot', text: `Could not search nearby disasters.${note}` }]);
+            } finally { setLoading(false); }
+          }} className="text-white text-sm">Search Nearby Disasters</button>
           <button onClick={onClose} className="text-white text-sm">Close</button>
         </div>
       </div>
@@ -287,17 +323,17 @@ function ChatbotPanel({ onClose }: { onClose: () => void }) {
 
 export default function ChatbotFloatingButton() {
   const [open, setOpen] = useState(false);
-  const [serverUp, setServerUp] = useState<boolean | null>(null);
+  const [serverState, setServerState] = useState<{ up: boolean; modelLoaded?: boolean | null } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     async function check() {
       try {
         const res = await fetch('/chatbot/api/health');
-        const d = await res.json();
-        if (!cancelled) setServerUp(Boolean(d?.up));
+        const d = await res.json().catch(() => ({}));
+        if (!cancelled) setServerState({ up: Boolean(d?.up), modelLoaded: d?.modelLoaded ?? null });
       } catch (e) {
-        if (!cancelled) setServerUp(false);
+        if (!cancelled) setServerState({ up: false, modelLoaded: null });
       }
     }
     check();
@@ -312,8 +348,8 @@ export default function ChatbotFloatingButton() {
         <button onClick={() => setOpen((o) => !o)} className="rounded-full w-14 h-14 flex items-center justify-center shadow-lg bg-white">
           <span style={{ fontSize: 20 }}>💬</span>
         </button>
-        <div className="text-xs text-gray-700 text-center">
-          {serverUp === null ? 'Checking...' : serverUp ? 'Connected' : 'Offline'}
+          <div className="text-xs text-gray-700 text-center">
+          {serverState === null ? 'Checking...' : serverState.up ? (serverState.modelLoaded === null ? 'Connected' : serverState.modelLoaded ? 'Connected (model ready)' : 'Connected (model unloaded)') : 'Offline'}
         </div>
       </div>
     </div>

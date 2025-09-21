@@ -18,6 +18,15 @@ async function detectLocationFromRequest(request: Request) {
 }
 
 export async function GET(request: Request) {
+  // First: try proxying to Flask which has server-side detection logic
+  try {
+    const flaskRes = await fetch('http://127.0.0.1:5000/detect_location', { method: 'GET' });
+    const d = await flaskRes.json().catch(() => null);
+    if (d) return NextResponse.json(d, { status: flaskRes.status || 200 });
+  } catch (e) {
+    // ignore and fall back to JS detection
+  }
+
   const loc = await detectLocationFromRequest(request);
   if (!loc) return NextResponse.json({ error: 'Could not detect location' }, { status: 404 });
   return NextResponse.json({ location: loc });
