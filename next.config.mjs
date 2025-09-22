@@ -18,12 +18,9 @@ const nextConfig = {
       },
     ],
   },
-<<<<<<< HEAD
   experimental: {
     serverComponentsExternalPackages: ['mongoose', '@supabase/supabase-js'],
   },
-=======
->>>>>>> 8a94dd1b160b1f998bb1cba5f679c5047a642fa4
   webpack: (config, { dev, isServer }) => {
     // Some environments / packages can cause the mini-css-extract-plugin loader to run
     // without the plugin being injected. In dev we add the plugin explicitly to avoid
@@ -59,16 +56,12 @@ const nextConfig = {
     }
 
     return config;
-<<<<<<< HEAD
   },
   // Vercel-specific optimizations
   poweredByHeader: false,
   compress: true,
   // Enable static optimization where possible
   staticPageGenerationTimeout: 1000,
-=======
-  }
->>>>>>> 8a94dd1b160b1f998bb1cba5f679c5047a642fa4
 }
 
 export default nextConfig

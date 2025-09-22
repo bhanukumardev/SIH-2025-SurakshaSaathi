@@ -1,4 +1,3 @@
-const Database = require('better-sqlite3');
 const fs = require('fs');
 const path = require('path');
 
@@ -13,11 +12,13 @@ if (process.env.DATABASE_URL) {
 
 let db;
 
+// Only try to use SQLite in development, fallback to JSON in production/serverless
 try {
+  const Database = require('better-sqlite3');
   db = new Database(dbFile);
   console.log(`Connected to SQLite database at ${dbFile}`);
 } catch (err) {
-  console.error('Failed to connect to SQLite database, falling back to JSON storage.', err);
+  console.warn('SQLite not available, falling back to JSON storage:', err.message);
   db = null;
 }
 
