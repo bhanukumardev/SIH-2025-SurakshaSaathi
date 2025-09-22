@@ -1,0 +1,74 @@
+[
+  {
+    "id": "earthquake",
+    "title": "Earthquake Safety",
+    "content": "Learn what to do before, during, and after an earthquake...",
+    "quiz": [
+      {
+        "question": "What should you do first during an earthquake?",
+        "choices": ["Run outside", "Drop, Cover, Hold On", "Use elevator"],
+        "answer": 1
+      }
+    ]
+  },
+  {
+    "id": "flood",
+    "title": "Flood Safety",
+    "content": "Understand flood risks and how to stay safe during floods...",
+    "quiz": [
+      {
+        "question": "What is the safest place during a flood?",
+        "choices": ["Basement", "Second floor or higher", "Near a river"],
+        "answer": 1
+      }
+    ]
+  },
+  {
+    "id": "fire",
+    "title": "Fire Safety",
+    "content": "Learn how to prevent fires and what to do if a fire occurs...",
+    "quiz": [
+      {
+        "question": "What should you do if your clothes catch fire?",
+        "choices": ["Run fast", "Stop, Drop, and Roll", "Jump into water"],
+        "answer": 1
+      }
+    ]
+  },
+  {
+    "id": "cyclone",
+    "title": "Cyclone Safety",
+    "content": "Prepare for cyclones and know the safety measures to take...",
+    "quiz": [
+      {
+        "question": "When should you evacuate during a cyclone?",
+        "choices": ["After the cyclone passes", "When authorities advise", "When you hear thunder"],
+        "answer": 1
+      }
+    ]
+  },
+  {
+    "id": "heatwave",
+    "title": "Heatwave Safety",
+    "content": "Stay cool and hydrated during extreme heat conditions...",
+    "quiz": [
+      {
+        "question": "What is important to do during a heatwave?",
+        "choices": ["Drink plenty of water", "Stay in direct sunlight", "Avoid water"],
+        "answer": 0
+      }
+    ]
+  },
+  {
+    "id": "landslide",
+    "title": "Landslide Safety",
+    "content": "Recognize landslide risks and how to respond safely...",
+    "quiz": [
+      {
+        "question": "What should you do if you hear a sudden roar near a hillside?",
+        "choices": ["Run uphill", "Run downhill", "Stay still"],
+        "answer": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ece248ae-2774-4fb2-ad39-b88f8fef6c6c-earthquake-1758316915574",
+    "userId": "ece248ae-2774-4fb2-ad39-b88f8fef6c6c",
+    "moduleId": "earthquake",
+    "score": 1,
+    "timestamp": "2025-09-19T21:21:55.574Z"
+  },
+  {
+    "id": "ece248ae-2774-4fb2-ad39-b88f8fef6c6c-flood-1758316923551",
+    "userId": "ece248ae-2774-4fb2-ad39-b88f8fef6c6c",
+    "moduleId": "flood",
+    "score": 1,
+    "timestamp": "2025-09-19T21:22:03.551Z"
+  },
+  {
+    "id": "ece248ae-2774-4fb2-ad39-b88f8fef6c6c-earthquake-1758316930425",
+    "userId": "ece248ae-2774-4fb2-ad39-b88f8fef6c6c",
+    "moduleId": "earthquake",
+    "score": 0,
+    "timestamp": "2025-09-19T21:22:10.425Z"
+  }
+]

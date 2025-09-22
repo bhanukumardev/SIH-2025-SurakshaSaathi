@@ -1,0 +1,32 @@
+[
+  {
+    "id": "drill-1",
+    "userId": "user-1",
+    "drillId": "earthquake-drill",
+    "timestamp": "2025-01-15T10:30:00.000Z"
+  },
+  {
+    "id": "drill-2",
+    "userId": "user-1",
+    "drillId": "fire-drill",
+    "timestamp": "2025-01-16T14:20:00.000Z"
+  },
+  {
+    "id": "drill-3",
+    "userId": "user-1",
+    "drillId": "flood-drill",
+    "timestamp": "2025-01-17T09:15:00.000Z"
+  },
+  {
+    "id": "drill-4",
+    "userId": "user-1",
+    "drillId": "earthquake-drill",
+    "timestamp": "2025-01-18T16:45:00.000Z"
+  },
+  {
+    "id": "drill-5",
+    "userId": "user-1",
+    "drillId": "fire-drill",
+    "timestamp": "2025-01-19T11:00:00.000Z"
+  }
+]

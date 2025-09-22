@@ -29,7 +29,10 @@ export function LanguageSelector() {
         {languages.map((language) => (
           <DropdownMenuItem
             key={language.code}
-            onClick={() => setLanguage(language.code)}
+            onClick={() => {
+              console.log("Language selected:", language.code)
+              setLanguage(language.code)
+            }}
             className={config.language === language.code ? "bg-accent" : ""}
           >
             <div className="flex flex-col">

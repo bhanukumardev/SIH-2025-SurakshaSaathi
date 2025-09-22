@@ -1,0 +1,11 @@
+[
+  {
+    "id": "user-1",
+    "name": "Test User",
+    "email": "test@example.com",
+    "passwordHash": "$2b$12$835x00sQ40lcJ8eoBDOSeocIKXhS/cQSLhRsOxvB5FSsC4YYE.Xe",
+    "role": "student",
+    "lastLoginDate": "",
+    "loginStreak": 0
+  }
+]
