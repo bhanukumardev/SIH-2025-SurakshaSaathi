@@ -10,6 +10,16 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['mongoose', '@supabase/supabase-js'],
   },
   webpack: (config, { dev, isServer }) => {
     // Some environments / packages can cause the mini-css-extract-plugin loader to run
@@ -46,7 +56,12 @@ const nextConfig = {
     }
 
     return config;
-  }
+  },
+  // Vercel-specific optimizations
+  poweredByHeader: false,
+  compress: true,
+  // Enable static optimization where possible
+  staticPageGenerationTimeout: 1000,
 }
 
 export default nextConfig
