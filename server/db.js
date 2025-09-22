@@ -1,4 +1,3 @@
-const Database = require('better-sqlite3');
 const fs = require('fs');
 const path = require('path');
 
@@ -19,13 +18,24 @@ if (!fs.existsSync(dbDir)) {
 
 let db;
 
-try {
-  db = new Database(dbFile);
-  console.log(`Connected to SQLite database at ${dbFile}`);
-} catch (err) {
-  console.error('Failed to connect to SQLite database, falling back to JSON storage.', err);
-  db = null;
+// Function to dynamically try to load better-sqlite3
+function initializeDatabase() {
+  try {
+    // Use dynamic require to handle cases where better-sqlite3 is not available
+    const Database = require('better-sqlite3');
+    db = new Database(dbFile);
+    console.log(`Connected to SQLite database at ${dbFile}`);
+    return true;
+  } catch (err) {
+    // This catches both module not found and database connection errors
+    console.error('Failed to connect to SQLite database, falling back to JSON storage.', err);
+    db = null;
+    return false;
+  }
 }
+
+// Try to initialize database
+const hasSQLite = initializeDatabase();
 
 const jsonFile = path.join(__dirname, 'users.json');
 

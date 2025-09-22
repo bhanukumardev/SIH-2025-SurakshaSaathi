@@ -12,15 +12,24 @@ if (process.env.DATABASE_URL) {
 
 let db;
 
-// Only try to use SQLite in development, fallback to JSON in production/serverless
-try {
-  const Database = require('better-sqlite3');
-  db = new Database(dbFile);
-  console.log(`Connected to SQLite database at ${dbFile}`);
-} catch (err) {
-  console.warn('SQLite not available, falling back to JSON storage:', err.message);
-  db = null;
+// Function to dynamically try to load better-sqlite3
+function initializeDatabase() {
+  try {
+    // Use dynamic require to handle cases where better-sqlite3 is not available
+    const Database = require('better-sqlite3');
+    db = new Database(dbFile);
+    console.log(`Connected to SQLite database at ${dbFile}`);
+    return true;
+  } catch (err) {
+    // This catches both module not found and database connection errors
+    console.warn('SQLite not available, falling back to JSON storage:', err.message);
+    db = null;
+    return false;
+  }
 }
+
+// Try to initialize database
+const hasSQLite = initializeDatabase();
 
 const jsonFile = path.join(__dirname, 'alerts.json');
 
