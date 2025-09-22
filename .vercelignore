@@ -1,0 +1,17 @@
+# Ignore local database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Ignore development files
+.env.local
+.env.development
+
+# Ignore Python environment
+chatbot/.venv/
+__pycache__/
+*.pyc
+
+# Ignore development scripts that require SQLite
+check_alerts.js
+test_alerts.js
