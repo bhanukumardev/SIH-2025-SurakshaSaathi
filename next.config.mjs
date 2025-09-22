@@ -10,7 +10,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ['localhost'],
+    domains: ['localhost', 'sih-2025-suraksha-saathi-1u2m.vercel.app'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -19,7 +19,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    serverComponentsExternalPackages: ['mongoose', '@supabase/supabase-js'],
+    serverComponentsExternalPackages: ['mongoose', '@supabase/supabase-js', 'better-sqlite3', 'bcrypt'],
   },
   webpack: (config, { dev, isServer }) => {
     // Some environments / packages can cause the mini-css-extract-plugin loader to run

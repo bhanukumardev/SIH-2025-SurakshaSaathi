@@ -83,6 +83,43 @@ npm start           # For production build
 - Frontend: http://localhost:3000  
 - API: http://localhost:3000/api/  
 
+## 🚀 Deployment
+
+### Vercel Deployment
+
+The application is optimized for deployment on Vercel. The live deployment is available at:
+https://sih-2025-suraksha-saathi-1u2m.vercel.app/
+
+#### Environment Variables for Production
+
+For production deployment, set the following environment variables in your Vercel dashboard:
+
+```bash
+NODE_ENV=production
+USE_SQLITE=0
+NEXT_PUBLIC_APP_URL=https://your-deployment-url.vercel.app
+NEXT_PUBLIC_API_URL=https://your-deployment-url.vercel.app/api
+JWT_SECRET=your-secure-jwt-secret
+SESSION_SECRET=your-secure-session-secret
+GOOGLE_CLIENT_ID=your-google-oauth-client-id
+GOOGLE_CLIENT_SECRET=your-google-oauth-secret
+```
+
+#### Deployment Configuration
+
+- **File Storage**: In production, the app uses `/tmp` directory for JSON file storage (serverless-friendly)
+- **Database**: SQLite is disabled in production; uses JSON files for data persistence
+- **Build Command**: `npm run build` (configured in `vercel.json`)
+- **API Routes**: All API endpoints are optimized for Vercel's serverless functions
+
+#### Manual Deployment Steps
+
+1. Fork this repository
+2. Connect your Vercel account to GitHub
+3. Import the project in Vercel dashboard
+4. Set required environment variables
+5. Deploy!
+
 ---
 
 ## 📚 API Documentation

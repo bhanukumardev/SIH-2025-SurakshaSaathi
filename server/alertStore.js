@@ -11,20 +11,33 @@ if (process.env.DATABASE_URL) {
 }
 
 let db;
+let useSQLite = process.env.NODE_ENV !== 'production';
 
 // Only try to use SQLite in development, fallback to JSON in production/serverless
-try {
-  const Database = require('better-sqlite3');
-  db = new Database(dbFile);
-  console.log(`Connected to SQLite database at ${dbFile}`);
-} catch (err) {
-  console.warn('SQLite not available, falling back to JSON storage:', err.message);
-  db = null;
+if (useSQLite) {
+  try {
+    const Database = require('better-sqlite3');
+    db = new Database(dbFile);
+    console.log(`Connected to SQLite database at ${dbFile}`);
+  } catch (err) {
+    console.warn('SQLite not available, falling back to JSON storage:', err.message);
+    db = null;
+    useSQLite = false;
+  }
 }
 
-const jsonFile = path.join(__dirname, 'alerts.json');
+// Use /tmp directory for serverless environments like Vercel
+const jsonFile = process.env.NODE_ENV === 'production' 
+  ? '/tmp/alerts.json' 
+  : path.join(__dirname, 'alerts.json');
 
 function getAlertsFromJson() {
+  // Ensure the directory exists for serverless environments
+  const dir = path.dirname(jsonFile);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  
   if (!fs.existsSync(jsonFile)) {
     fs.writeFileSync(jsonFile, JSON.stringify([]));
   }
@@ -33,6 +46,10 @@ function getAlertsFromJson() {
 }
 
 function saveAlertsToJson(alerts) {
+  const dir = path.dirname(jsonFile);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
   fs.writeFileSync(jsonFile, JSON.stringify(alerts, null, 2));
 }
 
