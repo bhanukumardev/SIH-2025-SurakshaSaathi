@@ -136,10 +136,55 @@ npm test -- --coverage     # Coverage reports
 
 ## 🚢 Deployment
 
-- Set `NODE_ENV=production` in `.env`  
-- Set `USE_SQLITE=1` for production DB  
-- Plug-and-play with Vercel/Netlify for static + API serverless deploy  
-- Docker Ready (see Dockerfile)  
+### Vercel Deployment (Recommended)
+
+1. **Fork and clone the repository:**
+   ```bash
+   git clone https://github.com/bhanukumardev/SIH-2025-SurakshaSaathi.git
+   cd SIH-2025-SurakshaSaathi
+   npm install
+   ```
+
+2. **Install Vercel CLI (if not already installed):**
+   ```bash
+   npm install -g vercel
+   ```
+
+3. **Deploy to Vercel:**
+   ```bash
+   vercel --prod
+   ```
+
+4. **Set Environment Variables in Vercel Dashboard:**
+   Go to your Vercel project dashboard and add these environment variables:
+   
+   **Required Variables:**
+   - `NODE_ENV` = `production`
+   - `ADMIN_API_KEY` = `your-secure-admin-key`
+   - `JWT_SECRET` = `your-secure-jwt-secret`
+   - `SESSION_SECRET` = `your-secure-session-secret`
+   - `USE_SQLITE` = `1`
+   - `FLASK_BASE_URL` = `https://chatbot-j5aa.onrender.com`
+   
+   **For Google OAuth (optional):**
+   - `GOOGLE_CLIENT_ID` = `your-google-client-id`
+   - `GOOGLE_CLIENT_SECRET` = `your-google-client-secret`
+   
+   **Public URLs (update after deployment):**
+   - `NEXT_PUBLIC_API_URL` = `https://your-app.vercel.app`
+   - `NEXT_PUBLIC_APP_URL` = `https://your-app.vercel.app`
+   - `FRONTEND_BASE` = `https://your-app.vercel.app`
+
+5. **Redeploy after setting environment variables:**
+   ```bash
+   vercel --prod
+   ```
+
+### Alternative Deployment Options
+
+- **Docker Ready:** Use the provided Dockerfile
+- **Netlify:** Compatible with static + serverless functions
+- **Self-hosted:** Set `NODE_ENV=production` and `USE_SQLITE=1` in `.env`
 
 ```dockerfile
 FROM node:18-alpine
