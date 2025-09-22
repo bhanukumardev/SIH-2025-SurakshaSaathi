@@ -21,7 +21,7 @@ echo "Downloading NLTK data by running the Python script..."
 
 echo "Python virtual environment setup complete."
 echo "Activate the virtual environment using the command:"
-echo "source ./.venv/bin/activate"
+echo "source ./chatbot/.venv/bin/activate"
 
 # Return to the previous directory
 cd ..

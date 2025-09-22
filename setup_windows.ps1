@@ -37,9 +37,9 @@ Write-Host "Running Python script with: $pythonExe $scriptPath"
 Write-Host "`nSetup complete!"
 Write-Host "Activate virtual environment using:"
 if (Test-Path $winPython) {
-    Write-Host ".\.venv\Scripts\Activate.ps1"
+    Write-Host ".\chatbot\.venv\Scripts\Activate.ps1"
 } else {
-    Write-Host "source ./.venv/bin/activate"
+    Write-Host "source ./chatbot/.venv/bin/activate"
 }
 
 # Return to original directory
