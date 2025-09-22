@@ -1,0 +1,13 @@
+[
+  {
+    "id": "earthquake-drill",
+    "title": "Earthquake Safety Drill",
+    "steps": [
+      "Drop under your desk immediately.",
+      "Cover your head and neck.",
+      "Hold on until the shaking stops.",
+      "Evacuate the building using the stairs."
+    ],
+    "region": "all"
+  }
+]
