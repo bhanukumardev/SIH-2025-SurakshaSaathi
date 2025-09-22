@@ -11,12 +11,14 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendPasswordResetEmail(email, resetToken) {
+  const frontendBase = process.env.FRONTEND_BASE || 'http://localhost:3001';
+  const resetUrl = `${frontendBase.replace(/\/$/, '')}/reset-password?token=${resetToken}`;
   const mailOptions = {
     from: process.env.SMTP_USER,
     to: email,
     subject: 'Password Reset',
-    text: `Click the link to reset your password: http://localhost:3001/reset-password?token=${resetToken}`,
-    html: `<p>Click the link to reset your password: <a href="http://localhost:3001/reset-password?token=${resetToken}">Reset Password</a></p>`,
+    text: `Click the link to reset your password: ${resetUrl}`,
+    html: `<p>Click the link to reset your password: <a href="${resetUrl}">Reset Password</a></p>`,
   };
 
   try {

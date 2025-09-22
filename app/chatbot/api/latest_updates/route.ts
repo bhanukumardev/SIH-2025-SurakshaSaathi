@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchLatestDisasterUpdates } from '../utils';
+import { FLASK_BASE } from '../flaskBase';
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
@@ -8,7 +9,7 @@ export async function POST(request: Request) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 3000);
-    const flaskRes = await fetch('http://127.0.0.1:5000/latest_updates', {
+  const flaskRes = await fetch(`${FLASK_BASE}/latest_updates`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tag }),

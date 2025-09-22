@@ -2,9 +2,11 @@ from flask import Flask, request, jsonify, render_template
 import logging
 import json
 import random
+from flask_cors import CORS
 
 app = Flask(__name__, template_folder='templates')
 logging.basicConfig(level=logging.INFO)
+CORS(app)  # Allow all domains; or configure specifically
 
 # Load intents for a lightweight fallback responder when the ML backend is unavailable
 try:
@@ -259,7 +261,8 @@ def map_pois_route():
         return jsonify({'error': 'Could not fetch POIs', 'details': str(e)}), 500
 
 
-# curl -X POST http://127.0.0.1:5000/handle_message -d '{"message":"what is coding"}' -H "Content-Type: application/json"
+# Example request (deployed):
+# curl -X POST https://sih-2025-surakshasaathi.onrender.com/handle_message -d '{"message":"what is coding"}' -H "Content-Type: application/json"
 
 
 if __name__ == '__main__':

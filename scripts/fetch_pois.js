@@ -16,7 +16,7 @@ function usageAndExit(msg) {
 
 async function main() {
   const argv = require('minimist')(process.argv.slice(2));
-  const url = argv.url || 'http://localhost:3000/chatbot/api/map_pois';
+  const url = argv.url || process.env.NEXT_PUBLIC_API_URL && `${process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '')}/chatbot/api/map_pois` || 'http://localhost:3000/chatbot/api/map_pois';
   const out = argv.out || 'public/pois.json';
 
   let locations = null;

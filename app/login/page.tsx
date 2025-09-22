@@ -49,7 +49,8 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:3001/auth/google';
+    const backendBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    window.location.href = `${backendBase.replace(/\/$/, '')}/auth/google`;
   };
 
   return (

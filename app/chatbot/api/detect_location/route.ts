@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { FLASK_BASE } from '../flaskBase';
 
 async function detectLocationFromRequest(request: Request) {
   // Attempt to read X-Forwarded-For or remote IP via headers
@@ -20,7 +21,7 @@ async function detectLocationFromRequest(request: Request) {
 export async function GET(request: Request) {
   // First: try proxying to Flask which has server-side detection logic
   try {
-    const flaskRes = await fetch('http://127.0.0.1:5000/detect_location', { method: 'GET' });
+  const flaskRes = await fetch(`${FLASK_BASE}/detect_location`, { method: 'GET' });
     const d = await flaskRes.json().catch(() => null);
     if (d) return NextResponse.json(d, { status: flaskRes.status || 200 });
   } catch (e) {

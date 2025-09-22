@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
+import { FLASK_BASE } from '../flaskBase';
 
 export async function GET() {
   // Try contacting the local Flask chatbot server's model_status endpoint
   try {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
-    const res = await fetch('http://127.0.0.1:5000/model_status', { method: 'GET', signal: controller.signal }).finally(() => clearTimeout(timeout));
+  const res = await fetch(`${FLASK_BASE}/model_status`, { method: 'GET', signal: controller.signal }).finally(() => clearTimeout(timeout));
     const d = await res.json().catch(() => null);
     // Normalize Flask's response into the frontend-friendly shape { up, modelLoaded }
     if (d && typeof d === 'object') {

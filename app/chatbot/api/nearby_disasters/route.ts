@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { FLASK_BASE } from '../flaskBase';
 
 // Simple in-memory TTL cache for this server process. For production use a
 // shared cache like Redis (see README or comments).
@@ -87,7 +88,7 @@ export async function POST(request: Request) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
-    const flaskRes = await fetch('http://127.0.0.1:5000/nearby_disasters', {
+  const flaskRes = await fetch(`${FLASK_BASE}/nearby_disasters`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lat, lon, radius_km: radius, days, country }),

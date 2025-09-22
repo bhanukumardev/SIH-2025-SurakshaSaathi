@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
 import { fetchLatestDisasterUpdates, loadIntentsJson } from '../utils';
+import { FLASK_BASE } from '../flaskBase';
 
 export async function POST(request: Request) {
-  const data = await request.json().catch(() => ({}));
+  try {
+    const data = await request.json().catch(() => ({}));
   const message = (data.message || '').toString();
 
   // Try a lightweight local intent match using intents.json (fallback)
@@ -43,25 +45,40 @@ export async function POST(request: Request) {
 
   // First: try proxying to a running Python Flask server (app.py) if available.
   // Try proxying to a running Python Flask server (app.py) if available.
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
-    const flaskRes = await fetch('http://127.0.0.1:5000/handle_message', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
-      signal: controller.signal
-    }).finally(() => clearTimeout(timeout));
-    // Parse JSON body even if Flask returned a non-2xx status.
-    const d = await flaskRes.json().catch(() => null);
-    if (d && d.response) {
-      // Return the Flask-provided response and preserve Flask status code where appropriate.
-      return NextResponse.json({ response: d.response }, { status: flaskRes.status || 200 });
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      const flaskRes = await fetch(`${FLASK_BASE}/handle_message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+        signal: controller.signal
+      }).finally(() => clearTimeout(timeout));
+
+      // Defensive: if flask returned non-JSON, capture raw text for logging
+      let d: any = null;
+      try {
+        d = await flaskRes.clone().json().catch(() => null);
+      } catch (err) {
+        try {
+          d = await flaskRes.text();
+        } catch (tErr) {
+          d = null;
+        }
+      }
+
+      if (d && typeof d === 'object' && d.response) {
+        return NextResponse.json({ response: d.response }, { status: flaskRes.status || 200 });
+      }
+      // If flask returned a string or other body, log it for troubleshooting
+      if (d && typeof d === 'string') {
+        console.error('Flask /handle_message returned non-JSON body:', d);
+      }
+      // Fall through to local fallback if no usable response
+    } catch (e) {
+      console.error('Error proxying to Flask /handle_message:', e);
+      // continue to fallback
     }
-    // If Flask returned no useful body, fall through to local fallback
-  } catch (e) {
-    // connection failed or timed out — continue to fallback
-  }
 
   // Attempt a simple keyword fallback using intents.json
   const tag = fallbackIntentForMessage(text);
@@ -94,5 +111,9 @@ export async function POST(request: Request) {
     '3) Share your location so I can look up nearby resources (hospitals, shelters, schools).'
   ].join('\n\n');
 
-  return NextResponse.json({ response: fallText }, { status: 200 });
+    return NextResponse.json({ response: fallText }, { status: 200 });
+  } catch (err: any) {
+    console.error('Unhandled error in /chatbot/api/handle_message:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
 }

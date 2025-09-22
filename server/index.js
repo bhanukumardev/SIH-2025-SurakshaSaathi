@@ -22,8 +22,9 @@ const handle = nextApp.getRequestHandler();
 const app = express();
 const PORT = 3000;
 
+const frontendOrigin = process.env.FRONTEND_BASE || process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: frontendOrigin,
   credentials: true
 }));
 

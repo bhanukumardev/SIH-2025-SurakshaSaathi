@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { FLASK_BASE } from '../flaskBase';
 
 function buildOverpassQuery(kind: string, lat: number, lon: number, radius_m = 20000) {
   const k = (kind || 'amenity').toLowerCase();
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
         try {
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), 5000);
-          const flaskRes = await fetch('http://127.0.0.1:5000/map_pois', {
+          const flaskRes = await fetch(`${FLASK_BASE}/map_pois`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ lat, lon, radius_m: radius, kind, limit }),
