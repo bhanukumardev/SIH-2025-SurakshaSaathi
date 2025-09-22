@@ -136,9 +136,21 @@ npm test -- --coverage     # Coverage reports
 
 ## 🚢 Deployment
 
+### Database Configuration
+
+The application uses a flexible database system:
+
+- **Development**: Uses SQLite via `better-sqlite3` for local development  
+- **Production/Serverless**: Automatically falls back to JSON file storage when SQLite is unavailable
+
+This ensures the application works seamlessly in serverless environments like Vercel where native modules may not be available.
+
+### Vercel Deployment
+
 - Set `NODE_ENV=production` in `.env`  
-- Set `USE_SQLITE=1` for production DB  
-- Plug-and-play with Vercel/Netlify for static + API serverless deploy  
+- The build system automatically handles the SQLite fallback
+- JSON storage is used for user data and alerts in serverless environments
+- Plug-and-play with Vercel for static + API serverless deploy  
 - Docker Ready (see Dockerfile)  
 
 ```dockerfile
