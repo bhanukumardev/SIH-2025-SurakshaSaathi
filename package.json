@@ -4,15 +4,24 @@
   "private": true,
   "scripts": {
     "build": "next build",
+<<<<<<< HEAD
     "dev": "next dev",
+=======
+    "dev": "concurrently \"npm:dev:node\" \"npm:dev:flask\"",
+    "dev:node": "next dev",
+>>>>>>> 8a94dd1b160b1f998bb1cba5f679c5047a642fa4
     "dev:flask": "./chatbot/.venv/bin/python3 ./chatbot/app.py",
     "lint": "next lint",
     "start": "next start",
     "test": "jest --passWithNoTests --runInBand",
     "start:flask": "./chatbot/.venv/bin/python3 ./chatbot/app.py",
     "fetch:pois": "node scripts/fetch_pois.js",
+<<<<<<< HEAD
     "dev:all": "bash ./scripts/start-dev.sh",
     "vercel-build": "npm run build"
+=======
+    "dev:all": "bash ./scripts/start-dev.sh"
+>>>>>>> 8a94dd1b160b1f998bb1cba5f679c5047a642fa4
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
