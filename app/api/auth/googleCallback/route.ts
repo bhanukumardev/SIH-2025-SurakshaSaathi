@@ -57,7 +57,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Create JWT token
-    const jwt = require('jsonwebtoken');
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'fallback-secret',
